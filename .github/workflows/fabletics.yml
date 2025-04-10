@@ -37,6 +37,14 @@ jobs:
       environment: ${{ github.event.inputs.environment }}
     secrets: inherit
 
+  test-eu:
+    if: github.event.inputs.domain == 'eu' || github.event.inputs.domain == 'all'
+    uses: ./.github/workflows/base.yml
+    with:
+      brand: fabletics
+      domain: eu
+      environment: ${{ github.event.inputs.environment }}
+    secrets: inherit
   test-uk:
     if: github.event.inputs.domain == 'uk' || github.event.inputs.domain == 'all'
     uses: ./.github/workflows/base.yml
