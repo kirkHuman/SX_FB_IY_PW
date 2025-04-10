@@ -1,0 +1,88 @@
+name: Deploy Test Reports to GitHub Pages
+on:
+  workflow_run:
+    workflows: ["Fabletics Tests", "SavageX Tests", "Yitty Tests"]
+    types:
+      - completed
+
+jobs:
+  collect-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Download all artifacts
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow_conclusion: completed
+          path: artifacts
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Prepare reports directory
+        run: |
+          mkdir -p reports
+          # Create index page
+          echo "<html><head><title>Test Reports</title><style>body{font-family:sans-serif;max-width:1200px;margin:0 auto;padding:20px}h1,h2{color:#333}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:10px;text-align:left;border-bottom:1px solid #ddd}th{background-color:#f2f2f2}tr:hover{background-color:#f5f5f5}a{color:#0366d6;text-decoration:none}a:hover{text-decoration:underline}.brand-section{margin:30px 0;padding:20px;border-radius:5px;background-color:#f9f9f9}</style></head><body>" > reports/index.html
+          echo "<h1>Test Reports</h1>" >> reports/index.html
+          echo "<p>Last updated: $(date)</p>" >> reports/index.html
+          
+          # Process each brand
+          for BRAND in fabletics savagex yitty; do
+            # Create brand section
+            echo "<div class='brand-section'>" >> reports/index.html
+            echo "<h2>${BRAND^} Brand</h2>" >> reports/index.html
+            echo "<table><tr><th>Domain</th><th>Environment</th><th>Status</th><th>Report</th></tr>" >> reports/index.html
+            
+            # Create brand directory
+            mkdir -p reports/$BRAND
+            
+            # Process artifacts for this brand
+            for ARTIFACT_DIR in artifacts/test-results-${BRAND}-*; do
+              if [ -d "$ARTIFACT_DIR" ]; then
+                # Extract domain and environment from artifact name
+                ARTIFACT_NAME=$(basename "$ARTIFACT_DIR")
+                DOMAIN=$(echo $ARTIFACT_NAME | cut -d'-' -f4)
+                ENV=$(echo $ARTIFACT_NAME | cut -d'-' -f5)
+                
+                # Create report directory
+                REPORT_PATH="$BRAND/$DOMAIN-$ENV"
+                mkdir -p "reports/$REPORT_PATH"
+                
+                # Copy report contents
+                if [ -d "$ARTIFACT_DIR/playwright-report" ]; then
+                  cp -r "$ARTIFACT_DIR/playwright-report"/* "reports/$REPORT_PATH/"
+                  STATUS="✅"
+                else
+                  echo "<p>No report available</p>" > "reports/$REPORT_PATH/index.html"
+                  STATUS="❌"
+                fi
+                
+                # Add entry to index
+                echo "<tr><td>${DOMAIN}</td><td>${ENV}</td><td>${STATUS}</td><td><a href='${REPORT_PATH}/'>View Report</a></td></tr>" >> reports/index.html
+              fi
+            done
+            
+            echo "</table></div>" >> reports/index.html
+          done
+          
+          echo "</body></html>" >> reports/index.html
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: reports
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 
