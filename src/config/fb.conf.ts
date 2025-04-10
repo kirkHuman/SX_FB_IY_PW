@@ -9,7 +9,8 @@ export const FB_CONFIG = {
     fr: 'fr',
     de: 'de',
     ca: 'ca',
-    es: 'es'
+    es: 'es',
+    dk: 'dk',
   },
   environments: {
     production: 'www.',
