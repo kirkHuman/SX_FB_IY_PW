@@ -20,11 +20,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Download all artifacts
+      - name: Download artifacts from triggering workflow
         uses: dawidd6/action-download-artifact@v2
         with:
+          workflow: ${{ github.event.workflow_run.name }}
+          run_id: ${{ github.event.workflow_run.id }}
           workflow_conclusion: completed
           path: artifacts
+          name: test-results-*
+          search_artifacts: true
+          check_artifacts: true
+          if_no_artifact_found: warn
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -36,6 +42,12 @@ jobs:
           echo "<html><head><title>Test Reports</title><style>body{font-family:sans-serif;max-width:1200px;margin:0 auto;padding:20px}h1,h2{color:#333}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:10px;text-align:left;border-bottom:1px solid #ddd}th{background-color:#f2f2f2}tr:hover{background-color:#f5f5f5}a{color:#0366d6;text-decoration:none}a:hover{text-decoration:underline}.brand-section{margin:30px 0;padding:20px;border-radius:5px;background-color:#f9f9f9}</style></head><body>" > reports/index.html
           echo "<h1>Test Reports</h1>" >> reports/index.html
           echo "<p>Last updated: $(date)</p>" >> reports/index.html
+          echo "<p>Triggered by: ${{ github.event.workflow_run.name }} (Run #${{ github.event.workflow_run.run_number }})</p>" >> reports/index.html
+          
+          # Check if artifacts were found
+          if [ -z "$(ls -A artifacts 2>/dev/null)" ]; then
+            echo "<div style='padding:20px;border-radius:5px;background-color:#fff3cd;color:#856404;margin:20px 0;'>No artifacts found from the triggering workflow. Either the tests didn't produce reports or they weren't uploaded correctly.</div>" >> reports/index.html
+          fi
           
           # Process each brand
           for BRAND in fabletics savagex yitty; do
@@ -47,9 +59,13 @@ jobs:
             # Create brand directory
             mkdir -p reports/$BRAND
             
+            # Check if any artifacts exist for this brand
+            FOUND_ARTIFACTS=false
+            
             # Process artifacts for this brand
             for ARTIFACT_DIR in artifacts/test-results-${BRAND}-*; do
               if [ -d "$ARTIFACT_DIR" ]; then
+                FOUND_ARTIFACTS=true
                 # Extract domain and environment from artifact name
                 ARTIFACT_NAME=$(basename "$ARTIFACT_DIR")
                 DOMAIN=$(echo $ARTIFACT_NAME | cut -d'-' -f4)
@@ -72,6 +88,11 @@ jobs:
                 echo "<tr><td>${DOMAIN}</td><td>${ENV}</td><td>${STATUS}</td><td><a href='${REPORT_PATH}/'>View Report</a></td></tr>" >> reports/index.html
               fi
             done
+            
+            # If no artifacts found for this brand, add a message
+            if [ "$FOUND_ARTIFACTS" = false ]; then
+              echo "<tr><td colspan='4'>No test reports available for ${BRAND^} brand in this workflow run</td></tr>" >> reports/index.html
+            fi
             
             echo "</table></div>" >> reports/index.html
           done

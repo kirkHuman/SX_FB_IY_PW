@@ -6,11 +6,11 @@ export const SXF_CONFIG = {
     fr: 'fr',
     es: 'es',
     de: 'de',
-    uk: 'co.uk'
+    uk: 'co.uk',
   },
   environments: {
-    production: 'www.',
-    preview: 'preview.',
+      production: 'www.',
+      preview: 'preview.',
     qa: 'qa.'
   }
 } as const;
