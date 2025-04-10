@@ -6,13 +6,18 @@ test.describe('Footer Tests', () => {
 
   test.beforeEach(async ({ page }) => {
     footerPage = new FooterPage(page);
-    console.log(`Running footer tests for brand: ${process.env.BRAND || 'savagex'}, domain: ${process.env.DOMAIN || 'us'}, env: ${process.env.ENV || 'production'}`);
+    //console.log(`Running footer tests for brand: ${process.env.BRAND || 'savagex'}, domain: ${process.env.DOMAIN || 'us'}, env: ${process.env.ENV || 'production'}`);
     await footerPage.goto('/');
     // Scroll to the footer to ensure it's visible
     await footerPage.scrollToFooter();
     
     // Remove hard-coded delay and use proper waiting
     await expect(footerPage.footerWrapper).toBeVisible({ timeout: 10000 });
+  });
+
+  test.only('should get title', async () => {
+    const title = await footerPage.page.title();
+    console.log(`Title: ${title}`);
   });
 
   test('should verify footer exists with all main sections', async () => {
