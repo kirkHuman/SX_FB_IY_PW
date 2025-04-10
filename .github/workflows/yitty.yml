@@ -10,9 +10,17 @@ on:
           - production
           - preview
           - qa
+      domain:
+        description: 'Select domain'
+        required: true
+        type: choice
+        options:
+          - all
+          - us
 
 jobs:
   test-us:
+    if: github.event.inputs.domain == 'us' || github.event.inputs.domain == 'all'
     uses: ./.github/workflows/base.yml
     with:
       brand: yitty
@@ -21,6 +29,7 @@ jobs:
     secrets: inherit
 
   test-uk:
+    if: github.event.inputs.domain == 'uk' || github.event.inputs.domain == 'all'
     uses: ./.github/workflows/base.yml
     with:
       brand: yitty

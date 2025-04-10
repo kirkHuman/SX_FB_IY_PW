@@ -10,60 +10,90 @@ on:
           - production
           - preview
           - qa
+      domain:
+        description: 'Select domain'
+        required: true
+        type: choice
+        options:
+          - all
+          - us
+          - uk
+          - ca
+          - de
+          - fr
+          - es
+          - nl
+          - sw
 
 jobs:
   test-us:
+    if: github.event.inputs.domain == 'us' || github.event.inputs.domain == 'all'
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
       domain: us
       environment: ${{ github.event.inputs.environment }}
+    secrets: inherit
 
   test-uk:
+    if: github.event.inputs.domain == 'uk' || github.event.inputs.domain == 'all'
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
       domain: uk
       environment: ${{ github.event.inputs.environment }}
+    secrets: inherit
 
   test-ca:
+    if: github.event.inputs.domain == 'ca' || github.event.inputs.domain == 'all'
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
       domain: ca
       environment: ${{ github.event.inputs.environment }}
+    secrets: inherit
 
   test-de:
+    if: github.event.inputs.domain == 'de' || github.event.inputs.domain == 'all'
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
       domain: de
       environment: ${{ github.event.inputs.environment }}
+    secrets: inherit
 
   test-fr:
+    if: github.event.inputs.domain == 'fr' || github.event.inputs.domain == 'all'
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
       domain: fr
       environment: ${{ github.event.inputs.environment }}
+    secrets: inherit
 
   test-es:
+    if: github.event.inputs.domain == 'es' || github.event.inputs.domain == 'all'
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
       domain: es
       environment: ${{ github.event.inputs.environment }}
+    secrets: inherit
 
   test-nl:
+    if: github.event.inputs.domain == 'nl' || github.event.inputs.domain == 'all'
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
       domain: nl
       environment: ${{ github.event.inputs.environment }}
+    secrets: inherit
 
   test-sw:
+    if: github.event.inputs.domain == 'sw' || github.event.inputs.domain == 'all'
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
       domain: sw
-      environment: ${{ github.event.inputs.environment }} 
+      environment: ${{ github.event.inputs.environment }}
+    secrets: inherit 
