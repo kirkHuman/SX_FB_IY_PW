@@ -1,0 +1,120 @@
+name: Playwright Tests
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    - cron: '0 0 * * *'  # Daily at midnight
+  workflow_dispatch:
+    inputs:
+      brand:
+        description: 'Select brand to test'
+        required: true
+        type: choice
+        options:
+          - savagex
+          - fabletics
+          - yitty
+      domain:
+        description: 'Select domain'
+        required: true
+        type: choice
+        options:
+          - us
+          - uk
+          - ca
+          - de
+          - fr
+          - es
+          - nl
+          - sw
+          - all
+      environment:
+        description: 'Select environment'
+        required: true
+        type: choice
+        options:
+          - production
+          - preview
+          - qa
+
+jobs:
+  test:
+    name: E2E Tests
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        brand: ${{ github.event_name == 'workflow_dispatch' && [github.event.inputs.brand] || [savagex, fabletics, yitty] }}
+        domain: ${{ github.event_name == 'workflow_dispatch' && [github.event.inputs.domain] || [us] }}
+        env: ${{ github.event_name == 'workflow_dispatch' && [github.event.inputs.environment] || [production] }}
+
+    env:
+      BRAND: ${{ matrix.brand }}
+      DOMAIN: ${{ matrix.domain }}
+      ENV: ${{ matrix.env }}
+      CI: true
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Install Playwright
+      run: npx playwright install --with-deps chromium
+      
+    - name: Run tests
+      run: npx playwright test
+      
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results-${{ matrix.brand }}-${{ matrix.env }}
+        path: |
+          playwright-report/
+          test-results/
+          
+  browserstack:
+    name: BrowserStack Tests
+    if: github.event_name == 'schedule'
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    env:
+      BROWSERSTACK: true
+      BRAND: savagex
+      DOMAIN: us
+      ENV: qa
+      
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Install Playwright
+      run: npx playwright install
+      
+    - name: Run BrowserStack tests
+      run: npm run test:browserstack
+      env:
+        BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+        BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+      
+    - name: Upload BrowserStack results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: browserstack-results
+        path: playwright-report/ 

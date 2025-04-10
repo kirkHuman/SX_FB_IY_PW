@@ -1,0 +1,48 @@
+name: Base Workflow
+on:
+  workflow_call:
+    inputs:
+      brand:
+        required: true
+        type: string
+      domains:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+
+jobs:
+  test:
+    name: E2E Tests
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    env:
+      BRAND: ${{ inputs.brand }}
+      DOMAIN: ${{ inputs.domains }}
+      ENV: ${{ inputs.environment }}
+      CI: true
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Install Playwright
+      run: npx playwright install --with-deps chromium
+      
+    - name: Run tests
+      run: npx playwright test
+      
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results-${{ inputs.brand }}-${{ inputs.domains }}-${{ inputs.environment }}
+        path: |
+          playwright-report/
+          test-results/ 

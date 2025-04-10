@@ -1,0 +1,30 @@
+{
+  "name": "sx_fb_yi_pw",
+  "version": "1.0.0",
+  "description": "Multi-brand Playwright test automation framework",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "test:savagex": "BRAND=savagex playwright test",
+    "test:fabletics": "BRAND=fabletics playwright test",
+    "test:yitty": "BRAND=yitty playwright test",
+    "test:qa": "ENV=qa playwright test",
+    "test:preview": "ENV=preview playwright test",
+    "test:prod": "ENV=production playwright test",
+    "test:browserstack": "BROWSERSTACK=true playwright test",
+    "test:savagex:prod": "ENV=production BRAND=savagex playwright test",
+    "report": "playwright show-report"
+  },
+  "keywords": ["playwright", "test-automation", "pom"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "latest",
+    "@slack/webhook": "latest",
+    "allure-playwright": "latest",
+    "dotenv": "latest",
+    "typescript": "latest"
+  }
+}
