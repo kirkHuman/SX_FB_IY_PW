@@ -22,62 +22,54 @@ jobs:
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
-      domains: us
+      domain: us
       environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
-    secrets: inherit
 
   test-uk:
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
-      domains: uk
+      domain: uk
       environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
-    secrets: inherit
 
   test-ca:
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
-      domains: ca
+      domain: ca
       environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
-    secrets: inherit
 
   test-de:
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
-      domains: de
+      domain: de
       environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
-    secrets: inherit
 
   test-fr:
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
-      domains: fr
+      domain: fr
       environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
-    secrets: inherit
 
   test-es:
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
-      domains: es
+      domain: es
       environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
-    secrets: inherit
 
   test-nl:
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
-      domains: nl
+      domain: nl
       environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
-    secrets: inherit
 
   test-sw:
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
-      domains: sw
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
-    secrets: inherit 
+      domain: sw
+      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }} 

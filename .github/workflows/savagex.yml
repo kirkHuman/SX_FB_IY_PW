@@ -22,46 +22,40 @@ jobs:
     uses: ./.github/workflows/base.yml
     with:
       brand: savagex
-      domains: us
+      domain: us
       environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
-    secrets: inherit
 
   test-uk:
     uses: ./.github/workflows/base.yml
     with:
       brand: savagex
-      domains: uk
+      domain: uk
       environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
-    secrets: inherit
 
   test-ca:
     uses: ./.github/workflows/base.yml
     with:
       brand: savagex
-      domains: ca
+      domain: ca
       environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
-    secrets: inherit
 
   test-de:
     uses: ./.github/workflows/base.yml
     with:
       brand: savagex
-      domains: de
+      domain: de
       environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
-    secrets: inherit
 
   test-fr:
     uses: ./.github/workflows/base.yml
     with:
       brand: savagex
-      domains: fr
+      domain: fr
       environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
-    secrets: inherit
 
   test-es:
     uses: ./.github/workflows/base.yml
     with:
       brand: savagex
-      domains: es
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
-    secrets: inherit 
+      domain: es
+      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }} 

@@ -5,7 +5,7 @@ on:
       brand:
         required: true
         type: string
-      domains:
+      domain:
         required: true
         type: string
       environment:
@@ -14,12 +14,12 @@ on:
 
 jobs:
   test:
-    name: E2E Tests
+    name: E2E Tests - ${{ inputs.brand }} - ${{ inputs.domain }}
     timeout-minutes: 30
     runs-on: ubuntu-latest
     env:
       BRAND: ${{ inputs.brand }}
-      DOMAIN: ${{ inputs.domains }}
+      DOMAIN: ${{ inputs.domain }}
       ENV: ${{ inputs.environment }}
       CI: true
 
@@ -42,7 +42,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: test-results-${{ inputs.brand }}-${{ inputs.domains }}-${{ inputs.environment }}
+        name: test-results-${{ inputs.brand }}-${{ inputs.domain }}-${{ inputs.environment }}
         path: |
           playwright-report/
           test-results/ 

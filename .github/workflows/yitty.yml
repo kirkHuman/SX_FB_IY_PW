@@ -22,7 +22,7 @@ jobs:
     uses: ./.github/workflows/base.yml
     with:
       brand: yitty
-      domains: us
+      domain: us
       environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
     secrets: inherit
 
@@ -30,6 +30,6 @@ jobs:
     uses: ./.github/workflows/base.yml
     with:
       brand: yitty
-      domains: uk
+      domain: uk
       environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
     secrets: inherit 
