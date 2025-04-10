@@ -9,7 +9,7 @@ test.describe('Footer Tests', () => {
     //console.log(`Running footer tests for brand: ${process.env.BRAND || 'savagex'}, domain: ${process.env.DOMAIN || 'us'}, env: ${process.env.ENV || 'production'}`);
     await footerPage.goto('/');
     // Scroll to the footer to ensure it's visible
-    await footerPage.scrollToFooter();
+    //await footerPage.scrollToFooter();
     
     // Remove hard-coded delay and use proper waiting
     //await expect(footerPage.footerWrapper).toBeVisible({ timeout: 10000 });
