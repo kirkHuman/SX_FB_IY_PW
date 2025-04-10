@@ -1,11 +1,5 @@
 name: Fabletics Tests
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
-  schedule:
-    - cron: '0 0 * * *'  # Daily at midnight
   workflow_dispatch:
     inputs:
       environment:
@@ -23,53 +17,53 @@ jobs:
     with:
       brand: fabletics
       domain: us
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+      environment: ${{ github.event.inputs.environment }}
 
   test-uk:
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
       domain: uk
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+      environment: ${{ github.event.inputs.environment }}
 
   test-ca:
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
       domain: ca
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+      environment: ${{ github.event.inputs.environment }}
 
   test-de:
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
       domain: de
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+      environment: ${{ github.event.inputs.environment }}
 
   test-fr:
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
       domain: fr
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+      environment: ${{ github.event.inputs.environment }}
 
   test-es:
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
       domain: es
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+      environment: ${{ github.event.inputs.environment }}
 
   test-nl:
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
       domain: nl
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+      environment: ${{ github.event.inputs.environment }}
 
   test-sw:
     uses: ./.github/workflows/base.yml
     with:
       brand: fabletics
       domain: sw
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }} 
+      environment: ${{ github.event.inputs.environment }} 

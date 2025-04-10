@@ -1,11 +1,5 @@
 name: SavageX Tests
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
-  schedule:
-    - cron: '0 0 * * *'  # Daily at midnight
   workflow_dispatch:
     inputs:
       environment:
@@ -23,39 +17,39 @@ jobs:
     with:
       brand: savagex
       domain: us
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+      environment: ${{ github.event.inputs.environment }}
 
   test-uk:
     uses: ./.github/workflows/base.yml
     with:
       brand: savagex
       domain: uk
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+      environment: ${{ github.event.inputs.environment }}
 
   test-ca:
     uses: ./.github/workflows/base.yml
     with:
       brand: savagex
       domain: ca
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+      environment: ${{ github.event.inputs.environment }}
 
   test-de:
     uses: ./.github/workflows/base.yml
     with:
       brand: savagex
       domain: de
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+      environment: ${{ github.event.inputs.environment }}
 
   test-fr:
     uses: ./.github/workflows/base.yml
     with:
       brand: savagex
       domain: fr
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+      environment: ${{ github.event.inputs.environment }}
 
   test-es:
     uses: ./.github/workflows/base.yml
     with:
       brand: savagex
       domain: es
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }} 
+      environment: ${{ github.event.inputs.environment }} 

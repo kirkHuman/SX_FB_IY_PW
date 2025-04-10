@@ -1,11 +1,5 @@
 name: Yitty Tests
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
-  schedule:
-    - cron: '0 0 * * *'  # Daily at midnight
   workflow_dispatch:
     inputs:
       environment:
@@ -23,7 +17,7 @@ jobs:
     with:
       brand: yitty
       domain: us
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+      environment: ${{ github.event.inputs.environment }}
     secrets: inherit
 
   test-uk:
@@ -31,5 +25,5 @@ jobs:
     with:
       brand: yitty
       domain: uk
-      environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+      environment: ${{ github.event.inputs.environment }}
     secrets: inherit 
