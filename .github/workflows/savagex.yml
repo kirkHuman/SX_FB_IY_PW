@@ -42,12 +42,12 @@ jobs:
       environment: ${{ github.event.inputs.environment }}
     secrets: inherit
 
-  test-ca:
+  test-eu:
     if: github.event.inputs.domain == 'eu' || github.event.inputs.domain == 'all'
     uses: ./.github/workflows/base.yml
     with:
       brand: savagex
-      domain: ca
+      domain: eu
       environment: ${{ github.event.inputs.environment }}
     secrets: inherit
 
