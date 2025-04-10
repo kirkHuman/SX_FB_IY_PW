@@ -35,6 +35,22 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
+      - name: Debug - List downloaded artifacts
+        run: |
+          echo "Listing all downloaded artifacts:"
+          ls -la artifacts/ || echo "No artifacts directory found"
+          if [ -d "artifacts" ]; then
+            echo "Artifact directories found:"
+            find artifacts -type d -name "test-results-*" | sort
+            echo "Checking for playwright-report in each artifact:"
+            for dir in artifacts/test-results-*; do
+              if [ -d "$dir" ]; then
+                echo "Contents of $dir:"
+                ls -la "$dir"
+              fi
+            done
+          fi
+      
       - name: Prepare reports directory
         run: |
           mkdir -p reports

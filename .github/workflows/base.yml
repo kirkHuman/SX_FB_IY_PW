@@ -38,6 +38,16 @@ jobs:
     - name: Run tests
       run: npx playwright test
       
+    - name: Debug test outputs
+      if: always()
+      run: |
+        echo "Checking test output directories:"
+        ls -la
+        echo "Playwright report directory:"
+        ls -la playwright-report/ || echo "No playwright-report directory found"
+        echo "Test results directory:"
+        ls -la test-results/ || echo "No test-results directory found"
+      
     - name: Upload test results
       if: always()
       uses: actions/upload-artifact@v4
