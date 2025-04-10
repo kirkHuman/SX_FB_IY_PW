@@ -43,7 +43,7 @@ jobs:
     secrets: inherit
 
   test-ca:
-    if: github.event.inputs.domain == 'ca' || github.event.inputs.domain == 'all'
+    if: github.event.inputs.domain == 'eu' || github.event.inputs.domain == 'all'
     uses: ./.github/workflows/base.yml
     with:
       brand: savagex
