@@ -51,6 +51,7 @@ export default defineConfig({
         brand: BRAND,
         domain: DOMAIN,
         env: ENV,
+        url: getBaseUrl()
       }
     }],
     ['./src/reporters/slackReporter.ts']
