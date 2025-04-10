@@ -12,7 +12,7 @@ export const FB_CONFIG = {
     es: 'es'
   },
   environments: {
-    production: '',
+    production: 'www.',
     preview: 'preview.',
     qa: 'qa.'
   }

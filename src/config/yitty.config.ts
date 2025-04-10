@@ -4,7 +4,7 @@ export const YITTY_CONFIG = {
     us: 'com'
   },
   environments: {
-    production: '',
+    production: 'www.',
     preview: 'preview.',
     qa: 'qa.'
   }

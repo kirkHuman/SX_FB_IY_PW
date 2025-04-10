@@ -9,7 +9,7 @@ export const SXF_CONFIG = {
     uk: 'co.uk'
   },
   environments: {
-    production: '',
+    production: 'www.',
     preview: 'preview.',
     qa: 'qa.'
   }
