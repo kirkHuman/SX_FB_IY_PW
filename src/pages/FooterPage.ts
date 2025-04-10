@@ -44,9 +44,6 @@ export class FooterPage extends BasePage {
       await this.waitForVisible(this.footerWrapper, 10000);
     } catch (error) {
       console.log('Could not locate footer with primary selector, trying alternative approach');
-      // Try a more generic approach if the specific selector fails
-      const genericFooter = this.page.locator('footer, body > div:last-child, #footer');
-      await this.waitForVisible(genericFooter, 5000);
     }
   }
 

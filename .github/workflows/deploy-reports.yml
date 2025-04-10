@@ -108,9 +108,29 @@ jobs:
                 if [ -d "$ARTIFACT_DIR/playwright-report" ]; then
                   cp -r "$ARTIFACT_DIR/playwright-report"/* "reports/$PW_REPORT_PATH/"
                   PW_STATUS="✅"
+                  
+                  # Extract test results statistics
+                  if [ -f "$ARTIFACT_DIR/playwright-report/index.html" ]; then
+                    # Parse the HTML to extract test results numbers
+                    PW_TOTAL=$(grep -o "tests-\(passed\|failed\|flaky\|skipped\)" "$ARTIFACT_DIR/playwright-report/index.html" | wc -l)
+                    PW_PASSED=$(grep -o "tests-passed" "$ARTIFACT_DIR/playwright-report/index.html" | wc -l)
+                    PW_FAILED=$(grep -o "tests-failed" "$ARTIFACT_DIR/playwright-report/index.html" | wc -l)
+                    
+                    # Calculate percentages
+                    if [ "$PW_TOTAL" -gt 0 ]; then
+                      PW_PASS_PERCENT=$(( (PW_PASSED * 100) / PW_TOTAL ))
+                      PW_FAIL_PERCENT=$(( (PW_FAILED * 100) / PW_TOTAL ))
+                      PW_STATS="(${PW_PASS_PERCENT}% passed, ${PW_FAIL_PERCENT}% failed)"
+                    else
+                      PW_STATS="(no tests found)"
+                    fi
+                  else
+                    PW_STATS="(stats unavailable)"
+                  fi
                 else
                   echo "<p>No Playwright report available</p>" > "reports/$PW_REPORT_PATH/index.html"
                   PW_STATUS="❌"
+                  PW_STATS=""
                 fi
                 
                 # Generate and copy Allure report
@@ -122,16 +142,36 @@ jobs:
                   # Generate the Allure report for this specific test set
                   allure generate "temp-allure-$BRAND-$DOMAIN-$ENV" -o "reports/$ALLURE_REPORT_PATH" --clean
                   
+                  # Extract Allure test statistics if available
+                  if [ -f "reports/$ALLURE_REPORT_PATH/widgets/summary.json" ]; then
+                    # Try to extract test counts from Allure summary
+                    ALLURE_TOTAL=$(grep -o '"total" *: *[0-9]*' "reports/$ALLURE_REPORT_PATH/widgets/summary.json" | grep -o '[0-9]*')
+                    ALLURE_PASSED=$(grep -o '"passed" *: *[0-9]*' "reports/$ALLURE_REPORT_PATH/widgets/summary.json" | grep -o '[0-9]*')
+                    ALLURE_FAILED=$(grep -o '"failed" *: *[0-9]*' "reports/$ALLURE_REPORT_PATH/widgets/summary.json" | grep -o '[0-9]*')
+                    
+                    # Calculate percentages
+                    if [ -n "$ALLURE_TOTAL" ] && [ "$ALLURE_TOTAL" -gt 0 ]; then
+                      ALLURE_PASS_PERCENT=$(( (ALLURE_PASSED * 100) / ALLURE_TOTAL ))
+                      ALLURE_FAIL_PERCENT=$(( (ALLURE_FAILED * 100) / ALLURE_TOTAL ))
+                      ALLURE_STATS="(${ALLURE_PASS_PERCENT}% passed, ${ALLURE_FAIL_PERCENT}% failed)"
+                    else
+                      ALLURE_STATS="(stats unavailable)"
+                    fi
+                  else
+                    ALLURE_STATS="(stats unavailable)"
+                  fi
+                  
                   # Clean up temp directory
                   rm -rf "temp-allure-$BRAND-$DOMAIN-$ENV"
                   ALLURE_STATUS="✅"
                 else
                   echo "<p>No Allure report available</p>" > "reports/$ALLURE_REPORT_PATH/index.html"
                   ALLURE_STATUS="❌"
+                  ALLURE_STATS=""
                 fi
                 
                 # Add entry to index
-                echo "<tr><td>${DOMAIN}</td><td>${ENV}</td><td>${PW_STATUS} ${ALLURE_STATUS}</td><td><a href='${PW_REPORT_PATH}/'>View Playwright</a></td><td><a href='${ALLURE_REPORT_PATH}/'>View Allure</a></td></tr>" >> reports/index.html
+                echo "<tr><td>${DOMAIN}</td><td>${ENV}</td><td>${PW_STATUS} ${PW_STATS} ${ALLURE_STATUS} ${ALLURE_STATS}</td><td><a href='${PW_REPORT_PATH}/'>View Playwright</a></td><td><a href='${ALLURE_REPORT_PATH}/'>View Allure</a></td></tr>" >> reports/index.html
               fi
             done
             
