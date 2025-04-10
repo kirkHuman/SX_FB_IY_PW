@@ -34,6 +34,14 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
+      - name: Install Allure CLI
+        run: |
+          curl -o allure-commandline.tgz -OLs https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.25.0/allure-commandline-2.25.0.tgz
+          tar -zxvf allure-commandline.tgz
+          sudo mv allure-2.25.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+          allure --version
+      
       - name: Debug - List downloaded artifacts
         run: |
           echo "Listing all downloaded artifacts:"
@@ -46,6 +54,10 @@ jobs:
               if [ -d "$dir" ]; then
                 echo "Contents of $dir:"
                 ls -la "$dir"
+                if [ -d "$dir/allure-results" ]; then
+                  echo "Allure results found in $dir:"
+                  ls -la "$dir/allure-results"
+                fi
               fi
             done
           fi
@@ -69,7 +81,7 @@ jobs:
             # Create brand section
             echo "<div class='brand-section'>" >> reports/index.html
             echo "<h2>${BRAND^} Brand</h2>" >> reports/index.html
-            echo "<table><tr><th>Domain</th><th>Environment</th><th>Status</th><th>Report</th></tr>" >> reports/index.html
+            echo "<table><tr><th>Domain</th><th>Environment</th><th>Status</th><th>Playwright Report</th><th>Allure Report</th></tr>" >> reports/index.html
             
             # Create brand directory
             mkdir -p reports/$BRAND
@@ -86,27 +98,46 @@ jobs:
                 DOMAIN=$(echo $ARTIFACT_NAME | cut -d'-' -f4)
                 ENV=$(echo $ARTIFACT_NAME | cut -d'-' -f5)
                 
-                # Create report directory
-                REPORT_PATH="$BRAND/$DOMAIN-$ENV"
-                mkdir -p "reports/$REPORT_PATH"
+                # Create report directories
+                PW_REPORT_PATH="$BRAND/$DOMAIN-$ENV/playwright"
+                ALLURE_REPORT_PATH="$BRAND/$DOMAIN-$ENV/allure"
+                mkdir -p "reports/$PW_REPORT_PATH"
+                mkdir -p "reports/$ALLURE_REPORT_PATH"
                 
-                # Copy report contents
+                # Copy Playwright report contents
                 if [ -d "$ARTIFACT_DIR/playwright-report" ]; then
-                  cp -r "$ARTIFACT_DIR/playwright-report"/* "reports/$REPORT_PATH/"
-                  STATUS="✅"
+                  cp -r "$ARTIFACT_DIR/playwright-report"/* "reports/$PW_REPORT_PATH/"
+                  PW_STATUS="✅"
                 else
-                  echo "<p>No report available</p>" > "reports/$REPORT_PATH/index.html"
-                  STATUS="❌"
+                  echo "<p>No Playwright report available</p>" > "reports/$PW_REPORT_PATH/index.html"
+                  PW_STATUS="❌"
+                fi
+                
+                # Generate and copy Allure report
+                if [ -d "$ARTIFACT_DIR/allure-results" ]; then
+                  # Create a temporary directory for this specific Allure report
+                  mkdir -p "temp-allure-$BRAND-$DOMAIN-$ENV"
+                  cp -r "$ARTIFACT_DIR/allure-results"/* "temp-allure-$BRAND-$DOMAIN-$ENV/"
+                  
+                  # Generate the Allure report for this specific test set
+                  allure generate "temp-allure-$BRAND-$DOMAIN-$ENV" -o "reports/$ALLURE_REPORT_PATH" --clean
+                  
+                  # Clean up temp directory
+                  rm -rf "temp-allure-$BRAND-$DOMAIN-$ENV"
+                  ALLURE_STATUS="✅"
+                else
+                  echo "<p>No Allure report available</p>" > "reports/$ALLURE_REPORT_PATH/index.html"
+                  ALLURE_STATUS="❌"
                 fi
                 
                 # Add entry to index
-                echo "<tr><td>${DOMAIN}</td><td>${ENV}</td><td>${STATUS}</td><td><a href='${REPORT_PATH}/'>View Report</a></td></tr>" >> reports/index.html
+                echo "<tr><td>${DOMAIN}</td><td>${ENV}</td><td>${PW_STATUS} ${ALLURE_STATUS}</td><td><a href='${PW_REPORT_PATH}/'>View Playwright</a></td><td><a href='${ALLURE_REPORT_PATH}/'>View Allure</a></td></tr>" >> reports/index.html
               fi
             done
             
             # If no artifacts found for this brand, add a message
             if [ "$FOUND_ARTIFACTS" = false ]; then
-              echo "<tr><td colspan='4'>No test reports available for ${BRAND^} brand in this workflow run</td></tr>" >> reports/index.html
+              echo "<tr><td colspan='5'>No test reports available for ${BRAND^} brand in this workflow run</td></tr>" >> reports/index.html
             fi
             
             echo "</table></div>" >> reports/index.html

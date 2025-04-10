@@ -13,7 +13,7 @@ const ENV = process.env.ENV || 'production';
 const BRAND = process.env.BRAND || 'savagex';
 const DOMAIN = process.env.DOMAIN || 'us';
 const HEADLESS = process.env.HEADED !== 'true';
-const DEBUG = process.env.DEBUG === 'true';
+const DEBUG = process.env.DEBUG === 'false';
 const BROWSERSTACK = process.env.BROWSERSTACK === 'false';
 
 // BrowserStack credentials
@@ -38,7 +38,21 @@ export default defineConfig({
   reporter: [
     ['html'],
     ['list'],
-    ['allure-playwright'],
+    ['allure-playwright', { 
+      resultsDir: 'allure-results',
+      detail: true,
+      suiteTitle: true,
+      reportDir: 'allure-report',
+      environmentInfo: {
+        os_platform: process.platform,
+        os_release: process.release,
+        os_version: process.version,
+        node_version: process.version,
+        brand: BRAND,
+        domain: DOMAIN,
+        env: ENV,
+      }
+    }],
     ['./src/reporters/slackReporter.ts']
   ],
   use: {

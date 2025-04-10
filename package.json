@@ -15,7 +15,11 @@
     "test:prod": "ENV=production playwright test",
     "test:browserstack": "BROWSERSTACK=true playwright test",
     "test:savagex:prod": "ENV=production BRAND=savagex playwright test",
-    "report": "playwright show-report"
+    "report": "playwright show-report",
+    "allure:generate": "allure generate allure-results --clean",
+    "allure:serve": "allure serve allure-results",
+    "allure:remove": "rm -rf allure-results && rm -rf allure-report",
+    "allure:open": "allure open allure-report"
   },
   "keywords": ["playwright", "test-automation", "pom"],
   "author": "",

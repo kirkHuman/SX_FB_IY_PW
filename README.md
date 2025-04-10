@@ -7,6 +7,7 @@ A simplified end-to-end test automation framework using Playwright with TypeScri
 - **Page Object Model**: Clean separation of test code and page interactions
 - **Multi-Brand Support**: `savagex`, `fabletics`, `yitty`
 - **Multi-Domain/Environment**: Test across domains (US, EU, etc.) and environments (QA, Preview, Production)
+- **Reporting**: Playwright HTML reports and Allure reports for detailed test analytics
 - **BrowserStack Integration**: Cross-browser testing capability
 - **GitHub Actions**: Automated CI/CD pipeline
 - **Slack Notifications**: Failure reporting via Slack
@@ -86,7 +87,17 @@ npm run test:browserstack
 
 View test reports:
 ```bash
+# View Playwright reports
 npm run report
+
+# Generate Allure reports from results
+npm run allure:generate
+
+# View Allure reports in browser
+npm run allure:serve
+
+# Open existing Allure report
+npm run allure:open
 ```
 
 ## Configuration

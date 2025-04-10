@@ -47,6 +47,8 @@ jobs:
         ls -la playwright-report/ || echo "No playwright-report directory found"
         echo "Test results directory:"
         ls -la test-results/ || echo "No test-results directory found"
+        echo "Allure results directory:"
+        ls -la allure-results/ || echo "No allure-results directory found"
       
     - name: Upload test results
       if: always()
@@ -55,4 +57,5 @@ jobs:
         name: test-results-${{ inputs.brand }}-${{ inputs.domain }}-${{ inputs.environment }}
         path: |
           playwright-report/
-          test-results/ 
+          test-results/
+          allure-results/ 
