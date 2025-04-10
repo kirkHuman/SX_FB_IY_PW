@@ -27,9 +27,8 @@ jobs:
           run_id: ${{ github.event.workflow_run.id }}
           workflow_conclusion: completed
           path: artifacts
-          name: test-results-*
           search_artifacts: true
-          check_artifacts: true
+          check_artifacts: false
           if_no_artifact_found: warn
       
       - name: Setup Pages
