@@ -17,6 +17,7 @@ on:
         options:
           - all
           - us
+          - eu
           - uk
           - ca
           - de
@@ -24,6 +25,7 @@ on:
           - es
           - nl
           - sw
+          - dk
 
 jobs:
   test-us:
@@ -95,5 +97,14 @@ jobs:
     with:
       brand: fabletics
       domain: sw
+      environment: ${{ github.event.inputs.environment }}
+    secrets: inherit
+
+  test-dk:
+    if: github.event.inputs.domain == 'dk' || github.event.inputs.domain == 'all'
+    uses: ./.github/workflows/base.yml
+    with:
+      brand: fabletics
+      domain: dk
       environment: ${{ github.event.inputs.environment }}
     secrets: inherit 
